@@ -1,7 +1,3 @@
-//
-// Created by igor on 06.05.17.
-//
-
 #ifndef SDIZO_PROJEKT2_ELEMENTLISTY_H
 #define SDIZO_PROJEKT2_ELEMENTLISTY_H
 

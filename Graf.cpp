@@ -1,7 +1,3 @@
-//
-// Created by igor on 06.05.17.
-//
-
 #include "Graf.h"
 
 using namespace std;
@@ -37,7 +33,7 @@ Graf::~Graf() {
 
 }
 
-void Graf::grafNieskierowany() {
+void Graf::zamienGrafNaNieskierowany() {
     int i, j;
     for (i = 0; i < wierzcholki; i++)
         grafNieskierowanyM[i] = new int[krawedzie];
@@ -192,7 +188,7 @@ void Graf::losujKrawedzie() {
     delete[] wDrzewie;
 }
 
-void Graf::losowyGraf() {
+void Graf::losujGraf() {
     int i, j;
     for (i = 0; i < wierzcholki; i++)
         macierzIncydencji[i] = new int[krawedzie];
@@ -205,7 +201,7 @@ void Graf::losowyGraf() {
         listySasiedztwa[i] = NULL;
 
     losujKrawedzie();
-    grafNieskierowany();
+    zamienGrafNaNieskierowany();
     for (i = 0; i < krawedzie; i++) {
         int wp = K[i].wp;
         int wk = K[i].wk;
@@ -222,15 +218,7 @@ void Graf::losowyGraf() {
 
 }
 
-int Graf::getWierzcholki() {
-    return wierzcholki;
-}
-
-int Graf::getKrawedzie() {
-    return krawedzie;
-}
-
-bool Graf::czySpojny() {
+bool Graf::sprawdzSpojnosc() {
     Stos stos;
     int w, u, i;
     int licz = 0;
@@ -262,35 +250,40 @@ bool Graf::czySpojny() {
     else return false;
 }
 
-void Graf::DFSMacierz(int w) {
+void Graf::macierz_DFS(int w) {
     int i, j;
     Stos stos;
     odwiedzone = new bool[wierzcholki];
     for (i = 0; i < wierzcholki; i++) {
         odwiedzone[i] = false;
     }
-    cout << "Graf nieskierowany na podstawie ktorego budowano drzewo: " << endl << endl;
-    cout << "   ";
+    cout << "Graf nieskierowany:" << endl;
+
+    cout << "      ";
     for (i = 0; i < krawedzieOdwrotne; i++) {
         cout << setw(3) << i;
 
     }
+    cout << endl << "      ";
+    for (i = 0; i < krawedzieOdwrotne; i++) {
+        cout << setw(3) << "-";
 
-    cout << endl << endl;
+    }
+
+    cout << endl;
     for (i = 0; i < wierzcholki; i++) {
-        cout << setw(3) << i;
+        cout << setw(3) << i << " | ";
         for (int j = 0; j < krawedzieOdwrotne; j++)
             cout << setw(3) << grafNieskierowanyM[i][j];
         cout << endl;
     }
     cout << endl;
-    cout << "   ";
+    cout << "Wagi: ";
     for (i = 0; i < krawedzieOdwrotne; i++) {
         cout << setw(3) << KO[i].waga;
     }
-    cout << " " << "<- wagi";
     cout << endl << endl;
-    cout << "Odwiedzone wierzcholki:" << endl << endl;
+    cout << "Odwiedzone wierzchołki:" << endl;
     // czasStart();
     stos.push(w);
     while (!stos.empty()) {
@@ -310,15 +303,17 @@ void Graf::DFSMacierz(int w) {
                         }
 
             }
-            cout << " -> " << w;
+            cout << w << ", ";
         }
     }
+    cout << endl << endl;
+
     // pobierzCzas();
     delete[]odwiedzone;
     stos.~Stos();
 }
 
-void Graf::DFSLista(int w) {
+void Graf::lista_DFS(int w) {
     Stos stos;
     int u, i;
 
@@ -326,9 +321,9 @@ void Graf::DFSLista(int w) {
     for (i = 0; i < wierzcholki; i++) {
         odwiedzone[i] = false;
     }
-    cout << endl << "Graf nieskierowany na podstawie ktorego wykonano DFS: " << endl << endl;
+    cout << endl << "Graf nieskierowany: " << endl;
     for (i = 0; i < wierzcholki; i++) {
-        cout << "LS[" << i << "] =";
+        cout << "[" << i << "] =";
         e1 = grafNieskierowanyL[i];
         while (e1) {
             cout << setw(3) << e1->w << "(" << e1->waga << ") ";
@@ -337,7 +332,7 @@ void Graf::DFSLista(int w) {
         cout << endl;
     }
     cout << endl << endl;
-    cout << "Odwiedzone wierzcholki:" << endl << endl;
+    cout << "Odwiedzone wierzchołki:" << endl << endl;
     //  czasStart();
     stos.push(w);
 
@@ -353,7 +348,7 @@ void Graf::DFSLista(int w) {
                     stos.push(u);
                 }
             }
-            cout << " -> " << w;
+            cout << w << ", ";
         }
 
     }
@@ -362,108 +357,7 @@ void Graf::DFSLista(int w) {
     stos.~Stos();
 }
 
-void Graf::DijkstraLista(int w) {
-    int korzen, wezel, rozmiarKopca, ojciec, lewySyn, prawySyn, kosztMin, synMin, syn, *koszta, *poprzednicy, *kopiec, *pozycjaKopiec;
-    Stos stos;
-    int szerokosc, i, j;
-    koszta = new int[wierzcholki];
-    poprzednicy = new int[wierzcholki];
-    odwiedzone = new bool[wierzcholki];
-    kopiec = new int[wierzcholki];
-    pozycjaKopiec = new int[wierzcholki];
-
-    for (i = 0; i < wierzcholki; i++) {
-        koszta[i] = MAXINT;
-        poprzednicy[i] = -1;
-        odwiedzone[i] = false;
-        kopiec[i] = pozycjaKopiec[i] = i;
-    }
-    //  czasStart();
-    rozmiarKopca = wierzcholki;
-
-    koszta[w] = 0;
-    wezel = kopiec[0];
-    kopiec[0] = kopiec[w];
-    kopiec[w] = wezel;
-    pozycjaKopiec[w] = 0;
-    pozycjaKopiec[0] = w;
-
-    for (i = 0; i < wierzcholki; i++) {
-        korzen = kopiec[0];
-
-        kopiec[0] = kopiec[--rozmiarKopca];
-        pozycjaKopiec[kopiec[0]] = ojciec = 0;
-        while (true) {
-            lewySyn = ojciec + ojciec + 1;
-            prawySyn = lewySyn + 1;
-            if (lewySyn >= rozmiarKopca) break;
-            kosztMin = koszta[kopiec[lewySyn]];
-            synMin = lewySyn;
-            if ((prawySyn < rozmiarKopca) && (kosztMin > koszta[kopiec[prawySyn]])) {
-                kosztMin = koszta[kopiec[prawySyn]];
-                synMin = prawySyn;
-            }
-            if (koszta[kopiec[ojciec]] <= kosztMin)
-                break;
-            wezel = kopiec[ojciec];
-            kopiec[ojciec] = kopiec[synMin];
-            kopiec[synMin] = wezel;
-            pozycjaKopiec[kopiec[ojciec]] = ojciec;
-            pozycjaKopiec[kopiec[synMin]] = synMin;
-            ojciec = synMin;
-        }
-
-        odwiedzone[korzen] = true;
-
-        if (listySasiedztwa[korzen] != NULL)
-            for (e1 = listySasiedztwa[korzen]; e1; e1 = e1->nastepny)
-                if (!odwiedzone[e1->w] && (koszta[e1->w] > koszta[korzen] + e1->waga)) {
-                    koszta[e1->w] = koszta[korzen] + e1->waga;
-                    poprzednicy[e1->w] = korzen;
-
-                    for (syn = pozycjaKopiec[e1->w]; syn; syn = ojciec) {
-                        ojciec = syn / 2;
-                        if (koszta[kopiec[ojciec]] <= koszta[kopiec[syn]])
-                            break;
-                        wezel = kopiec[ojciec];
-                        kopiec[ojciec] = kopiec[syn];
-                        kopiec[syn] = wezel;
-                        pozycjaKopiec[kopiec[ojciec]] = ojciec;
-                        pozycjaKopiec[kopiec[syn]] = syn;
-                    }
-                }
-    }
-    //pobierzCzas();
-    cout << endl;
-
-    cout << "Najkrotsza droga z wierzcholka nr " << w << " do wierzcholka nr: " << endl << endl;
-    for (i = 0; i < wierzcholki; i++) {
-        szerokosc = -2;
-
-        cout << i << ": ";
-
-
-        if (koszta[i] == MAXINT || koszta[i] < 0)
-            cout << "Brak sciezki" << endl;
-        else {
-            for (j = i; j > -1; j = poprzednicy[j]) {
-                stos.push(j);
-                szerokosc = szerokosc + 2;
-            }
-
-            while (!stos.empty()) {
-                cout << stos.top() << " ";
-                stos.pop();
-            }
-            for (j = 0; j < wierzcholki - szerokosc; j++)
-                cout << " ";
-            cout << setw(5) << "(" << koszta[i] << ")" << endl;
-        }
-    }
-    cout << endl << endl;
-}
-
-void Graf::DijkstraMacierz(int w) {
+void Graf::macierz_Dijkstra(int w) {
     int korzen, wezel, rozmiarKopca, ojciec, lewySyn, prawySyn, kosztMin, synMin, syn, *koszta, *poprzednicy, *kopiec, *pozycjaKopiec;
     Stos stos;
     int szerokosc, i, j, l;
@@ -542,7 +436,7 @@ void Graf::DijkstraMacierz(int w) {
     //pobierzCzas();
     cout << endl;
 
-    cout << "Najkrotsza droga z wierzcholka nr " << w << " do wierzcholka nr: " << endl << endl;
+    cout << "Najkrótsza ścieżka z wierzchołka " << w << ":" << endl;
     for (i = 0; i < wierzcholki; i++) {
         szerokosc = -2;
 
@@ -550,7 +444,7 @@ void Graf::DijkstraMacierz(int w) {
 
 
         if (koszta[i] == MAXINT || koszta[i] < 0)
-            cout << "Brak sciezki" << endl;
+            cout << "Brak" << endl;
         else {
             for (j = i; j > -1; j = poprzednicy[j]) {
                 stos.push(j);
@@ -569,7 +463,179 @@ void Graf::DijkstraMacierz(int w) {
     cout << endl << endl;
 }
 
-void Graf::primLista() {
+void Graf::lista_Dijkstra(int w) {
+    int korzen, wezel, rozmiarKopca, ojciec, lewySyn, prawySyn, kosztMin, synMin, syn, *koszta, *poprzednicy, *kopiec, *pozycjaKopiec;
+    Stos stos;
+    int szerokosc, i, j;
+    koszta = new int[wierzcholki];
+    poprzednicy = new int[wierzcholki];
+    odwiedzone = new bool[wierzcholki];
+    kopiec = new int[wierzcholki];
+    pozycjaKopiec = new int[wierzcholki];
+
+    for (i = 0; i < wierzcholki; i++) {
+        koszta[i] = MAXINT;
+        poprzednicy[i] = -1;
+        odwiedzone[i] = false;
+        kopiec[i] = pozycjaKopiec[i] = i;
+    }
+    //  czasStart();
+    rozmiarKopca = wierzcholki;
+
+    koszta[w] = 0;
+    wezel = kopiec[0];
+    kopiec[0] = kopiec[w];
+    kopiec[w] = wezel;
+    pozycjaKopiec[w] = 0;
+    pozycjaKopiec[0] = w;
+
+    for (i = 0; i < wierzcholki; i++) {
+        korzen = kopiec[0];
+
+        kopiec[0] = kopiec[--rozmiarKopca];
+        pozycjaKopiec[kopiec[0]] = ojciec = 0;
+        while (true) {
+            lewySyn = ojciec + ojciec + 1;
+            prawySyn = lewySyn + 1;
+            if (lewySyn >= rozmiarKopca) break;
+            kosztMin = koszta[kopiec[lewySyn]];
+            synMin = lewySyn;
+            if ((prawySyn < rozmiarKopca) && (kosztMin > koszta[kopiec[prawySyn]])) {
+                kosztMin = koszta[kopiec[prawySyn]];
+                synMin = prawySyn;
+            }
+            if (koszta[kopiec[ojciec]] <= kosztMin)
+                break;
+            wezel = kopiec[ojciec];
+            kopiec[ojciec] = kopiec[synMin];
+            kopiec[synMin] = wezel;
+            pozycjaKopiec[kopiec[ojciec]] = ojciec;
+            pozycjaKopiec[kopiec[synMin]] = synMin;
+            ojciec = synMin;
+        }
+
+        odwiedzone[korzen] = true;
+
+        if (listySasiedztwa[korzen] != NULL)
+            for (e1 = listySasiedztwa[korzen]; e1; e1 = e1->nastepny)
+                if (!odwiedzone[e1->w] && (koszta[e1->w] > koszta[korzen] + e1->waga)) {
+                    koszta[e1->w] = koszta[korzen] + e1->waga;
+                    poprzednicy[e1->w] = korzen;
+
+                    for (syn = pozycjaKopiec[e1->w]; syn; syn = ojciec) {
+                        ojciec = syn / 2;
+                        if (koszta[kopiec[ojciec]] <= koszta[kopiec[syn]])
+                            break;
+                        wezel = kopiec[ojciec];
+                        kopiec[ojciec] = kopiec[syn];
+                        kopiec[syn] = wezel;
+                        pozycjaKopiec[kopiec[ojciec]] = ojciec;
+                        pozycjaKopiec[kopiec[syn]] = syn;
+                    }
+                }
+    }
+    //pobierzCzas();
+    cout << endl;
+
+    cout << "Najkrótsza ścieżka z wierzchołka " << w << ":" << endl;
+    for (i = 0; i < wierzcholki; i++) {
+        szerokosc = -2;
+
+        cout << i << ": ";
+
+
+        if (koszta[i] == MAXINT || koszta[i] < 0)
+            cout << "Brak" << endl;
+        else {
+            for (j = i; j > -1; j = poprzednicy[j]) {
+                stos.push(j);
+                szerokosc = szerokosc + 2;
+            }
+
+            while (!stos.empty()) {
+                cout << stos.top() << " ";
+                stos.pop();
+            }
+            for (j = 0; j < wierzcholki - szerokosc; j++)
+                cout << " ";
+            cout << setw(5) << "(" << koszta[i] << ")" << endl;
+        }
+    }
+    cout << endl << endl;
+}
+
+void Graf::macierz_Prim() {
+
+    int w, i, j, g;
+    Krawedz krawedz;
+    priority_queue<Krawedz, vector<Krawedz>, Krawedz> kolejka;
+    DrzewoSpinajace *drzewo = new DrzewoSpinajace(wierzcholki, krawedzie);
+    odwiedzone = new bool[wierzcholki];
+    for (i = 0; i < wierzcholki; i++) {
+        odwiedzone[i] = false;
+    }
+
+    cout << "Graf nieskierowany:" << endl;
+
+    cout << "      ";
+    for (i = 0; i < krawedzieOdwrotne; i++) {
+        cout << setw(3) << i;
+
+    }
+    cout << endl << "      ";
+    for (i = 0; i < krawedzieOdwrotne; i++) {
+        cout << setw(3) << "-";
+
+    }
+
+    cout << endl;
+    for (i = 0; i < wierzcholki; i++) {
+        cout << setw(3) << i << " | ";
+        for (int j = 0; j < krawedzieOdwrotne; j++)
+            cout << setw(3) << grafNieskierowanyM[i][j];
+        cout << endl;
+    }
+    cout << endl;
+    cout << "Wagi: ";
+    for (i = 0; i < krawedzieOdwrotne; i++) {
+        cout << setw(3) << KO[i].waga;
+    }
+    cout << endl << endl;
+    //  czasStart();
+
+    w = 0;
+    odwiedzone[w] = true;
+    for (i = 1; i < wierzcholki; i++) {
+        for (g = 0; g < krawedzieOdwrotne; g++) {
+
+            if (grafNieskierowanyM[w][g] != 0)
+                for (j = 0; j < wierzcholki; j++)
+                    if (j != w && grafNieskierowanyM[j][g] != 0 && !odwiedzone[j]) {
+                        krawedz.wp = w;
+                        krawedz.wk = j;
+                        krawedz.waga = KO[g].waga;
+                        kolejka.push(krawedz);
+
+                    }
+        }
+        do {
+            krawedz = kolejka.top();
+            kolejka.pop();
+
+        } while (odwiedzone[krawedz.wk]);
+
+        drzewo->dodajKrawedz(krawedz);
+        odwiedzone[krawedz.wk] = true;
+        w = krawedz.wk;
+
+    }
+    // pobierzCzas();
+    cout << "Minimalne drzewo rozpinające:";
+    drzewo->wyswietl();
+    delete drzewo;
+}
+
+void Graf::lista_Prim() {
     int w, i;
     Krawedz k;
     priority_queue<Krawedz, vector<Krawedz>, Krawedz> kolejka;
@@ -578,9 +644,9 @@ void Graf::primLista() {
     for (i = 0; i < wierzcholki; i++) {
         odwiedzone[i] = false;
     }
-    cout << endl << "Graf nieskierowany na podstawie ktorego zbudowano drzewo: " << endl << endl;
+    cout << endl << "Graf nieskierowany: " << endl << endl;
     for (i = 0; i < wierzcholki; i++) {
-        cout << "LS[" << i << "] =";
+        cout << "[" << i << "] =";
         e1 = grafNieskierowanyL[i];
         while (e1) {
             cout << setw(3) << e1->w << "(" << e1->waga << ") ";
@@ -617,101 +683,42 @@ void Graf::primLista() {
 
     //pobierzCzas();
     cout << endl;
-    cout << "MST:";
-    drzewo->wyswietl();
-    delete drzewo;
-}
-
-void Graf::primMacierz() {
-
-    int w, i, j, g;
-    Krawedz krawedz;
-    priority_queue<Krawedz, vector<Krawedz>, Krawedz> kolejka;
-    DrzewoSpinajace *drzewo = new DrzewoSpinajace(wierzcholki, krawedzie);
-    odwiedzone = new bool[wierzcholki];
-    for (i = 0; i < wierzcholki; i++) {
-        odwiedzone[i] = false;
-    }
-
-    cout << "Graf nieskierowany na podstawie ktorego budowano drzewo: " << endl << endl;
-    cout << "   ";
-    for (i = 0; i < krawedzieOdwrotne; i++) {
-        cout << setw(3) << i;
-
-    }
-    cout << endl << endl;
-    for (i = 0; i < wierzcholki; i++) {
-        cout << setw(3) << i;
-        for (int j = 0; j < krawedzieOdwrotne; j++)
-            cout << setw(3) << grafNieskierowanyM[i][j];
-        cout << endl;
-    }
-    cout << endl;
-    cout << "   ";
-    for (i = 0; i < krawedzieOdwrotne; i++) {
-        cout << setw(3) << KO[i].waga;
-    }
-    cout << " " << "<- wagi";
-    cout << endl;
-    //  czasStart();
-
-    w = 0;
-    odwiedzone[w] = true;
-    for (i = 1; i < wierzcholki; i++) {
-        for (g = 0; g < krawedzieOdwrotne; g++) {
-
-            if (grafNieskierowanyM[w][g] != 0)
-                for (j = 0; j < wierzcholki; j++)
-                    if (j != w && grafNieskierowanyM[j][g] != 0 && !odwiedzone[j]) {
-                        krawedz.wp = w;
-                        krawedz.wk = j;
-                        krawedz.waga = KO[g].waga;
-                        kolejka.push(krawedz);
-
-                    }
-        }
-        do {
-            krawedz = kolejka.top();
-            kolejka.pop();
-
-        } while (odwiedzone[krawedz.wk]);
-
-        drzewo->dodajKrawedz(krawedz);
-        odwiedzone[krawedz.wk] = true;
-        w = krawedz.wk;
-
-    }
-    // pobierzCzas();
-    cout << endl << endl;
-    cout << "MST:";
+    cout << "Minimalne drzewo rozpinające:";
     drzewo->wyswietl();
     delete drzewo;
 }
 
 void Graf::wyswietl() {
+    cout << "Macierz incydencji:" << endl;
     int i;
-    cout << "   ";
+    cout << "      ";
     for (i = 0; i < krawedzie; i++) {
         cout << setw(3) << i;
 
     }
-    cout << endl << endl;
+
+    cout << endl << "      ";
+    for (i = 0; i < krawedzie; i++) {
+        cout << setw(3) << "-";
+
+    }
+
+    cout << endl;
     for (i = 0; i < wierzcholki; i++) {
-        cout << setw(3) << i;
+        cout << setw(3) << i << " | ";
         for (int j = 0; j < krawedzie; j++)
             cout << setw(3) << macierzIncydencji[i][j];
         cout << endl;
     }
     cout << endl;
-    cout << "   ";
+    cout << "Wagi: ";
     for (i = 0; i < krawedzie; i++) {
         cout << setw(3) << K[i].waga;
     }
 
-    cout << " " << "<- wagi";
-    cout << endl << endl << endl;
+    cout << endl << endl << "Lista poprzedników i następników:" << endl;
     for (i = 0; i < wierzcholki; i++) {
-        cout << "LS[" << i << "] =";
+        cout << "[" << i << "] =";
         e1 = listySasiedztwa[i];
         while (e1) {
             cout << setw(3) << e1->w << "(" << e1->waga << ") ";

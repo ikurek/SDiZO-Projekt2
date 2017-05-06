@@ -1,7 +1,3 @@
-//
-// Created by igor on 06.05.17.
-//
-
 #include "DrzewoSpinajace.h"
 
 using namespace std;
@@ -31,7 +27,6 @@ DrzewoSpinajace::~DrzewoSpinajace() {
 
     delete[]T;
 }
-
 
 void DrzewoSpinajace::dodajKrawedz(Krawedz k) {
     ElementListy *e;

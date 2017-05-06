@@ -1,12 +1,8 @@
-//
-// Created by igor on 06.05.17.
-//
-
-#include "UI.h"
+#include "Interfejs.h"
 
 using namespace std;
 
-void UI::start() {
+void UI::wyborMetodyGenerowaniaGrafu() {
 
     while (naPoczatek) {
         cout << "Etap I - Generowanie grafu:" << endl << "1. Wygeneruj losowy graf programowo" << endl
@@ -21,6 +17,98 @@ void UI::start() {
             case 2: {
                 grafZPliku();
                 wyborFunkcji();
+            }
+                break;
+        }
+    }
+}
+
+void UI::wyborFunkcji() {
+    while (!naPoczatek) {
+
+        cout << "Etap II - Analiza grafu przy pomocy algorytmów:" << endl
+             << "1. Wyświetl macierz incydencji i reprezentację listową" << endl
+             << "2. Algorytm DFS " << endl
+             << "3. Algorytm Dijkstry" << endl
+             << "4. Algorytm Prima" << endl
+             << "5. Powrót do etapu I" << endl;
+        cin >> wybor;
+        switch (wybor) {
+            case 1: {
+                graf->wyswietl();
+                cout << endl;
+            }
+                break;
+            case 2: {
+                while (true) {
+                    cout << "Zdefiniuj wierzchołek początkowy: ";
+                    cin >> b;
+                    if (b < graf->wierzcholki) break;
+                    else cout << "Graf nie zawiera wierzchołka o tym numerze." << endl;
+                }
+
+                while (true) {
+                    int wyborReprezentacji;
+                    cout << "Jakiej reprezentacji użyć w algorytmie?" << endl << "1. Macierz Incydecji" << endl
+                         << "2. Lista poprzedników i następników" << endl;
+                    cin >> wyborReprezentacji;
+                    if (wyborReprezentacji == 1) {
+                        graf->macierz_DFS(b);
+                        break;
+                    } else if (wyborReprezentacji == 2) {
+                        graf->lista_DFS(b);
+                        break;
+                    }
+                }
+            }
+                break;
+
+            case 3: {
+                while (true) {
+                    cout << "Zdefiniuj wierzchołek początkowy: ";
+                    cin >> b;
+                    if (b < graf->wierzcholki) break;
+                    else cout << "Podaj prawidlowy numer wierzcholka!" << endl;
+                }
+
+                while (true) {
+                    int wyborReprezentacji;
+                    cout << "Jakiej reprezentacji użyć w algorytmie?" << endl << "1. Macierz Incydecji" << endl
+                         << "2. Lista poprzedników i następników" << endl;
+                    cin >> wyborReprezentacji;
+                    if (wyborReprezentacji == 1) {
+                        graf->macierz_Dijkstra(b);
+                        break;
+                    } else if (wyborReprezentacji == 2) {
+                        graf->lista_Dijkstra(b);
+                        break;
+                    }
+                }
+            }
+                break;
+
+
+            case 4: {
+                while (true) {
+                    int wyborReprezentacji;
+                    cout << "Jakiej reprezentacji użyć w algorytmie?" << endl << "1. Macierz Incydecji" << endl
+                         << "2. Lista poprzedników i następników" << endl;
+                    cin >> wyborReprezentacji;
+                    if (wyborReprezentacji == 1) {
+                        graf->macierz_Prim();
+                        break;
+                    } else if (wyborReprezentacji == 2) {
+                        graf->lista_Prim();
+                        break;
+                    }
+                }
+
+            }
+                break;
+
+            case 5: {
+                delete graf;
+                naPoczatek = true;
             }
                 break;
         }
@@ -51,8 +139,8 @@ void UI::grafLosowy() {
     }
     double krawedzie = ceil((maxK * g) / 100);
     graf = new Graf(w, krawedzie);
-    graf->losowyGraf();
-};
+    graf->losujGraf();
+}
 
 void UI::grafZPliku() {
     naPoczatek = false;
@@ -120,8 +208,8 @@ void UI::grafZPliku() {
                         graf->macierzIncydencji[wk][i] = -1;
                     }
                     plik.close();
-                    graf->grafNieskierowany();
-                    if (!(graf->czySpojny())) {
+                    graf->zamienGrafNaNieskierowany();
+                    if (!(graf->sprawdzSpojnosc())) {
                         cout << "Zawarty w pliku graf jest niespójny, nie można wykonać algorytmów!" << endl;
                         naPoczatek = true;
                         delete graf;
@@ -134,98 +222,6 @@ void UI::grafZPliku() {
                     cout << "W pliku brakuje danych dotyczących krawędzi grafu." << endl;
                 }
             }
-        }
-    }
-}
-
-void UI::wyborFunkcji() {
-    while (!naPoczatek) {
-
-        cout << "Etap II - Analiza grafu przy pomocy algorytmów:" << endl
-             << "1. Wyświetl macierz incydencji i reprezentację listową" << endl
-             << "2. Algorytm DFS " << endl
-             << "3. Algorytm Dijkstry" << endl
-             << "4. Algorytm Prima" << endl
-             << "5. Powrót do etapu I" << endl;
-        cin >> wybor;
-        switch (wybor) {
-            case 1: {
-                graf->wyswietl();
-                cout << endl;
-            }
-                break;
-            case 2: {
-                while (true) {
-                    cout << "Zdefiniuj wierzchołek początkowy: ";
-                    cin >> b;
-                    if (b < graf->getWierzcholki()) break;
-                    else cout << "Graf nie zawiera wierzchołka o tym numerze." << endl;
-                }
-
-                while (true) {
-                    int wyborReprezentacji;
-                    cout << "Jakiej reprezentacji użyć w algorytmie?" << endl << "1. Macierz Incydecji" << endl
-                         << "2. Lista poprzedników i następników" << endl;
-                    cin >> wyborReprezentacji;
-                    if (wyborReprezentacji == 1) {
-                        graf->DFSMacierz(b);
-                        break;
-                    } else if (wyborReprezentacji == 2) {
-                        graf->DFSLista(b);
-                        break;
-                    }
-                }
-            }
-                break;
-
-            case 3: {
-                while (true) {
-                    cout << "Zdefiniuj wierzchołek początkowy: ";
-                    cin >> b;
-                    if (b < graf->getWierzcholki()) break;
-                    else cout << "Podaj prawidlowy numer wierzcholka!" << endl;
-                }
-
-                while (true) {
-                    int wyborReprezentacji;
-                    cout << "Jakiej reprezentacji użyć w algorytmie?" << endl << "1. Macierz Incydecji" << endl
-                         << "2. Lista poprzedników i następników" << endl;
-                    cin >> wyborReprezentacji;
-                    if (wyborReprezentacji == 1) {
-                        graf->DijkstraMacierz(b);
-                        break;
-                    } else if (wyborReprezentacji == 2) {
-                        graf->DijkstraLista(b);
-                        break;
-                    }
-                }
-            }
-                break;
-
-
-            case 4: {
-                while (true) {
-                    int wyborReprezentacji;
-                    cout << "Jakiej reprezentacji użyć w algorytmie?" << endl << "1. Macierz Incydecji" << endl
-                         << "2. Lista poprzedników i następników" << endl;
-                    cin >> wyborReprezentacji;
-                    if (wyborReprezentacji == 1) {
-                        graf->primMacierz();
-                        break;
-                    } else if (wyborReprezentacji == 2) {
-                        graf->primLista();
-                        break;
-                    }
-                }
-
-            }
-                break;
-
-            case 5: {
-                delete graf;
-                naPoczatek = true;
-            }
-                break;
         }
     }
 }

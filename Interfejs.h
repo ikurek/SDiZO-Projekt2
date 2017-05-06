@@ -1,10 +1,3 @@
-//
-// Created by igor on 06.05.17.
-//
-
-#ifndef SDIZO_PROJEKT2_UI_H
-#define SDIZO_PROJEKT2_UI_H
-
 #include <fstream>
 #include <math.h>
 #include <iomanip>
@@ -14,10 +7,9 @@
 #include "Stos.h"
 #include "Graf.h"
 
-
 class UI {
 public:
-    void start();
+    void wyborMetodyGenerowaniaGrafu();
 
     bool naPoczatek = true;
     int wybor, w, g, b;
@@ -29,6 +21,3 @@ public:
 
     void grafZPliku();
 };
-
-
-#endif //SDIZO_PROJEKT2_UI_H

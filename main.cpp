@@ -1,7 +1,6 @@
 #include <iostream>
 #include <ctime>
-#include "UI.h"
-
+#include "Interfejs.h"
 
 using namespace std;
 
@@ -9,5 +8,5 @@ int main() {
     srand(time(NULL));
 
     UI ui;
-    ui.start();
+    ui.wyborMetodyGenerowaniaGrafu();
 }

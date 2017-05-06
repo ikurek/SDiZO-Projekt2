@@ -1,10 +1,5 @@
-//
-// Created by igor on 06.05.17.
-//
-
 #ifndef SDIZO_PROJEKT2_GRAF_H
 #define SDIZO_PROJEKT2_GRAF_H
-
 
 #include <iostream>
 #include <ctime>
@@ -33,32 +28,27 @@ public:
 
 public:
 
-    void primMacierz();
+    void macierz_Prim();
 
     void wyswietl();
 
-    void primLista();
+    void lista_Prim();
 
-    void DijkstraMacierz(int w);
+    void macierz_Dijkstra(int w);
 
-    void DijkstraLista(int w);
+    void lista_Dijkstra(int w);
 
-    void DFSLista(int w);
+    void lista_DFS(int w);
 
-    void DFSMacierz(int w);
+    void macierz_DFS(int w);
 
-    bool czySpojny();
+    bool sprawdzSpojnosc();
 
-    int getKrawedzie();
-
-    int getWierzcholki();
-
-    void losowyGraf();
+    void losujGraf();
 
     void losujKrawedzie();
 
-    void grafNieskierowany();
+    void zamienGrafNaNieskierowany();
 };
-
 
 #endif //SDIZO_PROJEKT2_GRAF_H
