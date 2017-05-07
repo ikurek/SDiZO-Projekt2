@@ -26,7 +26,7 @@ void UI::wyborMetodyGenerowaniaGrafu() {
 void UI::wyborFunkcji() {
     while (!naPoczatek) {
 
-        cout << "Etap II - Analiza grafu przy pomocy algorytmów:" << endl
+        cout << endl << "Etap II - Analiza grafu przy pomocy algorytmów:" << endl
              << "1. Wyświetl macierz incydencji i reprezentację listową" << endl
              << "2. Algorytm DFS " << endl
              << "3. Algorytm Dijkstry" << endl

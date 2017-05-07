@@ -1,4 +1,5 @@
 #include "Graf.h"
+#include "Czas.h"
 
 using namespace std;
 
@@ -252,6 +253,7 @@ bool Graf::sprawdzSpojnosc() {
 
 void Graf::macierz_DFS(int w) {
     int i, j;
+    Czas czas;
     Stos stos;
     odwiedzone = new bool[wierzcholki];
     for (i = 0; i < wierzcholki; i++) {
@@ -284,7 +286,7 @@ void Graf::macierz_DFS(int w) {
     }
     cout << endl << endl;
     cout << "Odwiedzone wierzchołki:" << endl;
-    // czasStart();
+    czas.czasStart();
     stos.push(w);
     while (!stos.empty()) {
 
@@ -308,12 +310,14 @@ void Graf::macierz_DFS(int w) {
     }
     cout << endl << endl;
 
-    // pobierzCzas();
+    czas.czasStop();
+    cout << endl << "Czas: " << czas.czasWykonania() << endl;
     delete[]odwiedzone;
     stos.~Stos();
 }
 
 void Graf::lista_DFS(int w) {
+    Czas czas;
     Stos stos;
     int u, i;
 
@@ -333,7 +337,7 @@ void Graf::lista_DFS(int w) {
     }
     cout << endl << endl;
     cout << "Odwiedzone wierzchołki:" << endl << endl;
-    //  czasStart();
+    czas.czasStart();
     stos.push(w);
 
     while (!stos.empty()) {
@@ -352,13 +356,15 @@ void Graf::lista_DFS(int w) {
         }
 
     }
-    // pobierzCzas();
+    czas.czasStop();
+    cout << endl << "Czas: " << czas.czasWykonania() << endl;
     delete[]odwiedzone;
     stos.~Stos();
 }
 
 void Graf::macierz_Dijkstra(int w) {
     int korzen, wezel, rozmiarKopca, ojciec, lewySyn, prawySyn, kosztMin, synMin, syn, *koszta, *poprzednicy, *kopiec, *pozycjaKopiec;
+    Czas czas;
     Stos stos;
     int szerokosc, i, j, l;
     koszta = new int[wierzcholki];
@@ -375,7 +381,7 @@ void Graf::macierz_Dijkstra(int w) {
     }
 
 
-    // czasStart();
+    czas.czasStart();
     rozmiarKopca = wierzcholki;
 
     koszta[w] = 0;
@@ -433,7 +439,8 @@ void Graf::macierz_Dijkstra(int w) {
                     }
         }
     }
-    //pobierzCzas();
+    czas.czasStop();
+    cout << endl << "Czas: " << czas.czasWykonania() << endl;
     cout << endl;
 
     cout << "Najkrótsza ścieżka z wierzchołka " << w << ":" << endl;
@@ -465,6 +472,7 @@ void Graf::macierz_Dijkstra(int w) {
 
 void Graf::lista_Dijkstra(int w) {
     int korzen, wezel, rozmiarKopca, ojciec, lewySyn, prawySyn, kosztMin, synMin, syn, *koszta, *poprzednicy, *kopiec, *pozycjaKopiec;
+    Czas czas;
     Stos stos;
     int szerokosc, i, j;
     koszta = new int[wierzcholki];
@@ -479,7 +487,7 @@ void Graf::lista_Dijkstra(int w) {
         odwiedzone[i] = false;
         kopiec[i] = pozycjaKopiec[i] = i;
     }
-    //  czasStart();
+    czas.czasStart();
     rozmiarKopca = wierzcholki;
 
     koszta[w] = 0;
@@ -534,7 +542,8 @@ void Graf::lista_Dijkstra(int w) {
                     }
                 }
     }
-    //pobierzCzas();
+    czas.czasStop();
+    cout << endl << "Czas: " << czas.czasWykonania() << endl;
     cout << endl;
 
     cout << "Najkrótsza ścieżka z wierzchołka " << w << ":" << endl;
@@ -567,6 +576,7 @@ void Graf::lista_Dijkstra(int w) {
 void Graf::macierz_Prim() {
 
     int w, i, j, g;
+    Czas czas;
     Krawedz krawedz;
     priority_queue<Krawedz, vector<Krawedz>, Krawedz> kolejka;
     DrzewoSpinajace *drzewo = new DrzewoSpinajace(wierzcholki, krawedzie);
@@ -601,7 +611,7 @@ void Graf::macierz_Prim() {
         cout << setw(3) << KO[i].waga;
     }
     cout << endl << endl;
-    //  czasStart();
+    czas.czasStart();
 
     w = 0;
     odwiedzone[w] = true;
@@ -629,7 +639,8 @@ void Graf::macierz_Prim() {
         w = krawedz.wk;
 
     }
-    // pobierzCzas();
+    czas.czasStop();
+    cout << endl << "Czas: " << czas.czasWykonania() << endl;
     cout << "Minimalne drzewo rozpinające:";
     drzewo->wyswietl();
     delete drzewo;
@@ -637,6 +648,7 @@ void Graf::macierz_Prim() {
 
 void Graf::lista_Prim() {
     int w, i;
+    Czas czas;
     Krawedz k;
     priority_queue<Krawedz, vector<Krawedz>, Krawedz> kolejka;
     DrzewoSpinajace *drzewo = new DrzewoSpinajace(wierzcholki, krawedzie);
@@ -655,7 +667,7 @@ void Graf::lista_Prim() {
         cout << endl;
     }
     cout << endl;
-    // czasStart();
+    czas.czasStart();
     w = 0;
     odwiedzone[w] = true;
 
@@ -681,7 +693,8 @@ void Graf::lista_Prim() {
 
     }
 
-    //pobierzCzas();
+    czas.czasStop();
+    cout << endl << "Czas: " << czas.czasWykonania() << endl;
     cout << endl;
     cout << "Minimalne drzewo rozpinające:";
     drzewo->wyswietl();
